@@ -1,22 +1,22 @@
 package com.github.valdr;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * <p>Produces JSON validation rules on the fly parsing model classes in your classpath. Upon each request the
@@ -40,7 +40,7 @@ public class ValidationRulesServlet extends HttpServlet {
   private ConstraintParser parser;
 
   @Override
-  public void init(ServletConfig config) throws ServletException {
+  public void init(final ServletConfig config) throws ServletException {
     super.init(config);
 
     Options options = loadOptions();
@@ -55,9 +55,15 @@ public class ValidationRulesServlet extends HttpServlet {
   }
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
     if (correctlyConfigured) {
-      String json = parser.parse();
+      String json = null;
+    try {
+        json = parser.parse();
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
       returnJson(response, json);
     } else {
       sendErrorInvalidConfiguration(response);
@@ -84,7 +90,7 @@ public class ValidationRulesServlet extends HttpServlet {
     }
   }
 
-  private String validate(Options options) {
+  private String validate(final Options options) {
     String validationMsg = StringUtils.EMPTY;
     try {
       options.validate();
@@ -110,11 +116,11 @@ public class ValidationRulesServlet extends HttpServlet {
     logger.info(logMsg, corsAllowOriginPattern);
   }
 
-  private void sendErrorInvalidConfiguration(HttpServletResponse response) throws IOException {
+  private void sendErrorInvalidConfiguration(final HttpServletResponse response) throws IOException {
     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, invalidConfigurationMessage);
   }
 
-  private void returnJson(HttpServletResponse response, String json) throws IOException {
+  private void returnJson(final HttpServletResponse response, final String json) throws IOException {
     setCorsHeader(response);
     response.setContentType("application/json;charset=UTF-8");
     response.setContentLength(json.getBytes("utf-8").length);
@@ -123,7 +129,7 @@ public class ValidationRulesServlet extends HttpServlet {
     writer.close();
   }
 
-  private void setCorsHeader(HttpServletResponse response) {
+  private void setCorsHeader(final HttpServletResponse response) {
     if (StringUtils.isNotEmpty(corsAllowOriginPattern)) {
       response.setHeader("Access-Control-Allow-Origin", corsAllowOriginPattern);
     }

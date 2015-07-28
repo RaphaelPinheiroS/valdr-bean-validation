@@ -1,14 +1,8 @@
 package com.github.valdr;
 
-import com.github.valdr.decorator.AbstractConstraintAttributesDecorator;
-import com.github.valdr.decorator.NullDecorator;
-import com.github.valdr.decorator.PatternDecorator;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.hibernate.validator.constraints.Email;
-
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Max;
@@ -17,8 +11,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import org.hibernate.validator.constraints.Email;
+import com.github.valdr.decorator.AbstractConstraintAttributesDecorator;
+import com.github.valdr.decorator.NullDecorator;
+import com.github.valdr.decorator.PatternDecorator;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * All constraints currently supported out-of-the-box by valdr Bean Validation. Each value represents a constraint
@@ -39,12 +39,12 @@ public enum BuiltInConstraint {
   private final Class<? extends AbstractConstraintAttributesDecorator> decorator;
   private final String camelCaseName;
 
-  private BuiltInConstraint(String camelCaseName, Class<? extends Annotation> beanValidationAnnotation) {
+  private BuiltInConstraint(final String camelCaseName, final Class<? extends Annotation> beanValidationAnnotation) {
     this(camelCaseName, beanValidationAnnotation, NullDecorator.class);
   }
 
-  private BuiltInConstraint(String camelCaseName, Class<? extends Annotation> beanValidationAnnotation,
-                            Class<? extends AbstractConstraintAttributesDecorator> decorator) {
+  private BuiltInConstraint(final String camelCaseName, final Class<? extends Annotation> beanValidationAnnotation,
+                            final Class<? extends AbstractConstraintAttributesDecorator> decorator) {
     this.camelCaseName = camelCaseName;
     this.decorator = decorator;
     this.beanValidationAnnotation = beanValidationAnnotation;
@@ -60,9 +60,15 @@ public enum BuiltInConstraint {
    *
    * @param attributes the attributes to decorate
    * @return decorator
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @SneakyThrows(ReflectiveOperationException.class)
-  public AbstractConstraintAttributesDecorator createDecoratorFor(ConstraintAttributes attributes) {
+  public AbstractConstraintAttributesDecorator createDecoratorFor(final ConstraintAttributes attributes) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     return decorator.getConstructor(ConstraintAttributes.class).newInstance(attributes);
   }
 
@@ -75,7 +81,7 @@ public enum BuiltInConstraint {
     return Iterables.transform(Arrays.asList(values()), new Function<BuiltInConstraint, Class<? extends Annotation>>() {
 
       @Override
-      public Class<? extends Annotation> apply(BuiltInConstraint input) {
+      public Class<? extends Annotation> apply(final BuiltInConstraint input) {
         if (input == null) {
           throw new NullPointerException("Passed validator must not be null.");
         }
@@ -90,12 +96,16 @@ public enum BuiltInConstraint {
    * @param beanValidationAnnotation annotation class
    * @return enum value matching the passed annotation or null
    */
-  public static BuiltInConstraint valueOfAnnotationClassOrNull(Class<? extends Annotation> beanValidationAnnotation) {
+  public static BuiltInConstraint valueOfAnnotationClassOrNull(final Class<? extends Annotation> beanValidationAnnotation) {
     for (BuiltInConstraint supportedValidator : values()) {
       if (supportedValidator.getBeanValidationAnnotation().equals(beanValidationAnnotation)) {
         return supportedValidator;
       }
     }
     return null;
+  }
+
+  public Class<? extends Annotation> getBeanValidationAnnotation() {
+      return beanValidationAnnotation;
   }
 }

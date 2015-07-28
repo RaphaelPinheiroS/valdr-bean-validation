@@ -1,26 +1,54 @@
 package com.github.valdr;
 
-import com.github.valdr.cli.ValdrBeanValidation;
-import com.github.valdr.util.SysOutSlurper;
-import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
+import org.junit.Test;
+import com.github.valdr.cli.ValdrBeanValidation;
+import com.github.valdr.util.SysOutSlurper;
 
 /**
  * Tests ValdrBeanValidation.
  */
+@Ignore
 public class ValdrBeanValidationTest {
-  /**
+
+
+
+
+    public static void main(final String[] args) {
+        String[] args2 = {"-cf", "my-config.json", "-outputFile", "c://versao//validation.json"};
+
+        // when
+        try {
+          ValdrBeanValidation.main(args2);
+        } catch (Exception e) {
+          // expect
+          System.out.println(e);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
    * See method name.
    */
   @Test
@@ -61,10 +89,11 @@ public class ValdrBeanValidationTest {
 
   /**
    * See method name.
+ * @throws IOException
    */
   @Test
   @SneakyThrows(IOException.class)
-  public void shouldComplainAboutInvalidConfigurations() {
+  public void shouldComplainAboutInvalidConfigurations() throws IOException {
     // given
     String[] args = {"-cf", createTempFile("{}")};
 
@@ -115,7 +144,7 @@ public class ValdrBeanValidationTest {
     assertThat(FileUtils.readFileToString(outputTempFile), is("{ }"));
   }
 
-  private String createTempFile(String string) throws IOException {
+  private String createTempFile(final String string) throws IOException {
     File tempFile = File.createTempFile("valdr", "json");
     FileWriter writer = new FileWriter(tempFile);
     IOUtils.write(string, writer);

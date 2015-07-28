@@ -1,20 +1,21 @@
 package com.github.valdr;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.SneakyThrows;
+import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.valdr.serializer.MinimalMapSerializer;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import lombok.SneakyThrows;
-import org.reflections.ReflectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Parses classes in defined packages for supported <a href="http://beanvalidation.org/">Bean Validation (JSR 303)</a>
@@ -36,7 +37,7 @@ public class ConstraintParser {
    *
    * @param options the only relevant input for the parser is this configuration
    */
-  public ConstraintParser(Options options) {
+  public ConstraintParser(final Options options) {
     this.options = options;
     this.classpathScanner = new ClasspathScanner(options);
     allRelevantAnnotationClasses = Iterables.concat(BuiltInConstraint.getAllBeanValidationAnnotations(),
@@ -47,8 +48,15 @@ public class ConstraintParser {
    * Based on the configuration passed to the constructor model classes are parsed for constraints.
    *
    * @return JSON string for <a href="https://github.com/netceteragroup/valdr">valdr</a>
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
+ * @throws JsonProcessingException
    */
-  public String parse() {
+  public String parse() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     Map<String, ClassConstraints> classNameToValidationRulesMap = new HashMap<>();
 
     for (Class clazz : classpathScanner.findClassesToParse()) {
@@ -66,7 +74,7 @@ public class ConstraintParser {
   }
 
   @SneakyThrows(IOException.class)
-  private String toJson(Map<String, ClassConstraints> classNameToValidationRulesMap) {
+  private String toJson(final Map<String, ClassConstraints> classNameToValidationRulesMap) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
 
     SimpleModule module = new SimpleModule();
@@ -82,7 +90,7 @@ public class ConstraintParser {
       Class<? extends Annotation>>() {
       @Override
       @SuppressWarnings("unchecked")
-      public Class<? extends Annotation> apply(String className) {
+      public Class<? extends Annotation> apply(final String className) {
         Class<?> validatorClass = ReflectionUtils.forName(className);
         if (validatorClass.isAnnotation()) {
           return (Class<? extends Annotation>) validatorClass;

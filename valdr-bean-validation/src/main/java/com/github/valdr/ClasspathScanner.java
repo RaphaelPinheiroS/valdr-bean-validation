@@ -1,19 +1,18 @@
 package com.github.valdr;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Set;
+import javax.persistence.Entity;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URL;
-import java.util.Collection;
-import java.util.Set;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 
 /**
  * Provides means to scan the classpath for model classes that need to be parsed for constraint annotations.
@@ -27,7 +26,7 @@ public class ClasspathScanner {
    *
    * @param options the only relevant input for the parser is this configuration
    */
-  public ClasspathScanner(Options options) {
+  public ClasspathScanner(final Options options) {
     this.options = options;
   }
 
@@ -39,10 +38,11 @@ public class ClasspathScanner {
    * @see com.github.valdr.Options#getExcludedClasses()
    */
   public Set<Class<?>> findClassesToParse() {
-    Reflections reflections = new Reflections(new ConfigurationBuilder().
-      setUrls(buildClassLoaderUrls()).setScanners(new SubTypesScanner(false)).filterInputsBy(buildPackagePredicates()));
-
-    return reflections.getSubTypesOf(Object.class);
+    ConfigurationBuilder cb = new ConfigurationBuilder().setUrls(buildClassLoaderUrls());
+    //cb = cb.setScanners(new Annotation());
+    cb = cb.filterInputsBy(buildPackagePredicates());
+    Reflections reflections = new Reflections(cb);
+    return reflections.getTypesAnnotatedWith(Entity.class);
   }
 
   private Collection<URL> buildClassLoaderUrls() {

@@ -1,9 +1,9 @@
 package com.github.valdr.decorator;
 
-import com.github.valdr.ConstraintAttributes;
-import com.github.valdr.MinimalObjectMap;
 import lombok.AccessLevel;
 import lombok.Getter;
+import com.github.valdr.ConstraintAttributes;
+import com.github.valdr.MinimalObjectMap;
 
 /**
  * Base implementation of a wrapper around {@link ConstraintAttributes}. It ensures that all sub classes provide a
@@ -19,17 +19,21 @@ public abstract class AbstractConstraintAttributesDecorator implements MinimalOb
    *
    * @param decoratee wrapped {@link ConstraintAttributes}
    */
-  public AbstractConstraintAttributesDecorator(ConstraintAttributes decoratee) {
+  public AbstractConstraintAttributesDecorator(final ConstraintAttributes decoratee) {
     this.decoratee = decoratee;
   }
 
   @Override
-  public Object put(String key, Object value) {
+  public Object put(final String key, final Object value) {
     return decoratee.put(key, value);
   }
 
   @Override
   public int size() {
     return decoratee.size();
+  }
+
+  public ConstraintAttributes getDecoratee() {
+      return decoratee;
   }
 }

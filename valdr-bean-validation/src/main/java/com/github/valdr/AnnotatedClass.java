@@ -1,15 +1,15 @@
 package com.github.valdr;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import org.reflections.ReflectionUtils;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 /**
  * Wrapper around a class with Bean Validation (and possibly other) annotations. Allows to extract validation rules
@@ -26,7 +26,7 @@ public class AnnotatedClass {
    * @param relevantAnnotationClasses only these annotation classes are considered when {@link
    *                                  AnnotatedClass#extractValidationRules()} is invoked
    */
-  AnnotatedClass(Class clazz, List<String> excludedFields, Iterable<Class<? extends Annotation>>
+  AnnotatedClass(final Class clazz, final List<String> excludedFields, final Iterable<Class<? extends Annotation>>
     relevantAnnotationClasses) {
     this.clazz = clazz;
     this.excludedFields = excludedFields;
@@ -37,9 +37,15 @@ public class AnnotatedClass {
    * Parses all fields and builds validation rules for those with relevant annotations.
    *
    * @return validation rules for all fields that have at least one rule
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    * @see AnnotatedClass(Class, Iterable)
    */
-  ClassConstraints extractValidationRules() {
+  ClassConstraints extractValidationRules() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     final ClassConstraints classConstraints = new ClassConstraints();
     Set<Field> allFields = ReflectionUtils.getAllFields(clazz, buildAnnotationsPredicate());
     for (Field field : allFields) {
@@ -54,7 +60,7 @@ public class AnnotatedClass {
     return classConstraints;
   }
 
-  private boolean isNotExcluded(Field field) {
+  private boolean isNotExcluded(final Field field) {
     String fullyQualifiedFieldName = field.getDeclaringClass().getName() + "#" + field.getName();
     return !excludedFields.contains(fullyQualifiedFieldName);
   }

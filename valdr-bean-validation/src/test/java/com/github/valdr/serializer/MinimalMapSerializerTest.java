@@ -87,7 +87,11 @@ public class MinimalMapSerializerTest {
 
   @Value
   private static final class ClassWithString {
-    private final String string;
+      private final String string;
+
+      public ClassWithString(final String string) {
+          this.string = string;
+      }
   }
 
   private static final class TestMinimalMap implements MinimalMap<Object> {
@@ -105,7 +109,7 @@ public class MinimalMapSerializerTest {
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public Object put(final String key, final Object value) {
       return map.put(key, value);
     }
   }

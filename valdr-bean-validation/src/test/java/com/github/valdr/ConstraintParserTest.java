@@ -1,5 +1,15 @@
 package com.github.valdr;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.valdr.model.a.TestModelWithASingleAnnotatedMember;
@@ -13,16 +23,6 @@ import com.github.valdr.model.g.TestModelWithHibernateUrlAnnotation;
 import com.github.valdr.model.h.TestModelWithPatterns;
 import com.github.valdr.model.validation.CustomValidation;
 import com.google.common.collect.Lists;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
 
 public class ConstraintParserTest {
   private static final String LS = System.getProperty("line.separator");
@@ -30,9 +30,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldReturnEmptyJsonObjectWhenNoClassIsFound() {
+  public void shouldReturnEmptyJsonObjectWhenNoClassIsFound() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(emptyStringList(), emptyStringList());
     // when
@@ -43,9 +50,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldReturnDefaultMessage() {
+  public void shouldReturnDefaultMessage() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithASingleAnnotatedMember.class.getPackage().getName()),
       emptyStringList());
@@ -66,9 +80,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldReturnCustomMessage() {
+  public void shouldReturnCustomMessage() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithASingleAnnotatedMemberWithCustomMessageKey.class.getPackage()
       .getName()), emptyStringList());
@@ -89,9 +110,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldIgnoreNotConfiguredCustomAnnotations() {
+  public void shouldIgnoreNotConfiguredCustomAnnotations() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithCustomValidator.class.getPackage().getName()),
       emptyStringList());
@@ -103,9 +131,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldIgnoreNotSupportedAnnotations() {
+  public void shouldIgnoreNotSupportedAnnotations() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelClassWithLotsOfIrrelevantAnnotations.class.getPackage().getName()
     ), emptyStringList());
@@ -117,9 +152,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldProcessConfiguredCustomAnnotation() {
+  public void shouldProcessConfiguredCustomAnnotation() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithCustomValidator.class.getPackage().getName()), Lists
       .newArrayList(CustomValidation.class.getName()));
@@ -138,9 +180,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldSupportHibernateEmailAnnotation() {
+  public void shouldSupportHibernateEmailAnnotation() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithHibernateEmailAnnotation.class.getPackage().getName()),
       emptyStringList());
@@ -154,9 +203,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldSupportHibernateUrlAnnotation() {
+  public void shouldSupportHibernateUrlAnnotation() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithHibernateUrlAnnotation.class.getPackage().getName()),
       emptyStringList());
@@ -172,9 +228,15 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldConsiderSuperClassMembers() throws IOException {
+  public void shouldConsiderSuperClassMembers() throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     // given
     parserConfiguredFor(Lists.newArrayList(SubClassWithNoValidatedMembers.class.getPackage().getName()),
       emptyStringList());
@@ -190,9 +252,16 @@ public class ConstraintParserTest {
 
   /**
    * See method name.
+ * @throws JsonProcessingException
+ * @throws SecurityException
+ * @throws NoSuchMethodException
+ * @throws InvocationTargetException
+ * @throws IllegalArgumentException
+ * @throws IllegalAccessException
+ * @throws InstantiationException
    */
   @Test
-  public void shouldDecoratePatternConstraint() {
+  public void shouldDecoratePatternConstraint() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JsonProcessingException {
     // given
     parserConfiguredFor(Lists.newArrayList(TestModelWithPatterns.class.getPackage().getName()), emptyStringList());
     // when
@@ -203,7 +272,7 @@ public class ConstraintParserTest {
     assertThat(json, containsString("/\\\\\\\\abc\\\\./")); // JSON needs to escape \ -> double escape here
   }
 
-  private void parserConfiguredFor(List<String> modelPackages, List<String> customAnnotationClasses) {
+  private void parserConfiguredFor(final List<String> modelPackages, final List<String> customAnnotationClasses) {
     Options options = new Options();
     options.setModelPackages(modelPackages);
     options.setCustomAnnotationClasses(customAnnotationClasses);
